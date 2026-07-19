@@ -225,7 +225,7 @@ curl http://localhost:5000/health
 
 > **TODO:** Add your Loom walkthrough link here after recording (5–10 minutes: approach, architecture, per-brand context, live demo of two isolated brands, trade-offs).
 
-**Loom link:** _[paste link here]_
+**Loom link:** https://www.loom.com/share/c7489d35bdc94b8d977a6504d2cb7dba
 
 ---
 
