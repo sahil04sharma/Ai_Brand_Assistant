@@ -15,7 +15,7 @@ structured state (proves context evolves and stays isolated per brand).
 
 - Backend: Node.js, Express, Mongoose, MongoDB Atlas
 - LLM: Groq API (model: llama-3.3-70b-versatile or similar current Groq model)
-- Frontend: React + Vite, plain CSS (no heavy UI library needed)
+- Frontend: React + Vite, Tailwind CSS (no heavy UI library needed)
 - Env vars: `MONGO_URI`, `GROQ_API_KEY`, `PORT`
 
 ## Data Model
