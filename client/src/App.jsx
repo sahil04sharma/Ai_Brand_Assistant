@@ -81,9 +81,9 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white px-6 py-4">
-        <h1 className="text-xl font-semibold tracking-tight">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+      <header className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
+        <h1 className="text-[18px] font-semibold tracking-tight sm:text-[20px]">
           AI Brand Assistant
         </h1>
         <p className="text-sm text-slate-500">
@@ -91,10 +91,10 @@ export default function App() {
         </p>
       </header>
 
-      <main className="mx-auto grid max-w-6xl gap-4 p-6 lg:grid-cols-[1fr_280px]">
-        <section className="space-y-4">
+      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-4 p-4 sm:gap-6 sm:p-6 lg:grid-cols-[1fr_280px]">
+        <section className="flex min-w-0 flex-col gap-4">
           {listError && (
-            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p className="rounded-[8px] bg-red-50 px-3 py-2 text-[14px] text-red-700">
               {listError}
             </p>
           )}
@@ -107,7 +107,7 @@ export default function App() {
           />
 
           {loadingBrand ? (
-            <div className="rounded-md border border-slate-200 bg-white p-6 text-sm text-slate-500">
+            <div className="rounded-[10px] border border-slate-200 bg-white p-6 text-[14px] text-slate-500">
               Loading brand…
             </div>
           ) : (
@@ -119,8 +119,34 @@ export default function App() {
           )}
         </section>
 
-        <aside>
-          <StatePanel brand={loadingBrand ? null : brand} />
+        <aside className="flex min-w-0 flex-col gap-4">
+          <div className="order-2 rounded-[10px] border border-slate-200 bg-white p-4 lg:order-1">
+            <h2 className="text-[13px] font-semibold text-slate-500">
+              How to use
+            </h2>
+            <ol className="mt-2 list-decimal space-y-1.5 pl-4 text-[14px] leading-relaxed text-slate-700">
+              <li>
+                Create a brand (e.g. &quot;Fitness Brand&quot;) or select one from
+                the dropdown.
+              </li>
+              <li>
+                Chat about what you want — try &quot;I want a fitness brand&quot;,
+                then &quot;Make it more premium&quot;.
+              </li>
+              <li>
+                Watch the Brand state panel update after each reply (name,
+                tagline, audience, tone, keywords).
+              </li>
+              <li>
+                Switch brands in the dropdown to load that brand&apos;s own chat
+                and state — contexts stay isolated.
+              </li>
+            </ol>
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <StatePanel brand={loadingBrand ? null : brand} />
+          </div>
         </aside>
       </main>
     </div>
