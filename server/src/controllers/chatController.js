@@ -5,28 +5,28 @@ import { generateBrandUpdate } from "../services/llmService.js";
 function mergeState(current, incoming) {
   if (!incoming || typeof incoming !== "object") return current;
 
-  const next = { ...current };
+  const next = {
+    brandName: current.brandName || "",
+    tagline: current.tagline || "",
+    targetAudience: current.targetAudience || "",
+    tone: current.tone || "",
+    keywords: Array.isArray(current.keywords) ? [...current.keywords] : [],
+  };
 
-  for (const key of [
-    "brandName",
-    "tagline",
-    "targetAudience",
-    "tone",
-    "keywords",
-  ]) {
-    if (incoming[key] === undefined || incoming[key] === null) continue;
+  for (const key of ["brandName", "tagline", "targetAudience", "tone"]) {
+    if (typeof incoming[key] !== "string") continue;
+    const value = incoming[key].trim();
+    // Never wipe an existing value with an empty LLM field
+    if (!value) continue;
+    next[key] = value;
+  }
 
-    if (key === "keywords") {
-      if (Array.isArray(incoming.keywords)) {
-        next.keywords = incoming.keywords.filter(
-          (k) => typeof k === "string" && k.trim()
-        );
-      }
-      continue;
-    }
-
-    if (typeof incoming[key] === "string") {
-      next[key] = incoming[key];
+  if (Array.isArray(incoming.keywords)) {
+    const keywords = incoming.keywords
+      .filter((k) => typeof k === "string" && k.trim())
+      .map((k) => k.trim());
+    if (keywords.length > 0) {
+      next.keywords = keywords;
     }
   }
 
@@ -58,7 +58,10 @@ export async function chat(req, res) {
       { role: "user", content: userMessage },
       { role: "assistant", content: reply }
     );
-    brand.state = mergeState(brand.state.toObject?.() ?? brand.state, state);
+
+    const currentState = brand.state?.toObject?.() ?? brand.state;
+    brand.state = mergeState(currentState, state);
+    brand.markModified("state");
 
     await brand.save();
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BrandDropdown from "./components/BrandDropdown";
 import ChatWindow from "./components/ChatWindow";
 import StatePanel from "./components/StatePanel";
@@ -15,6 +15,11 @@ export default function App() {
   const [brand, setBrand] = useState(null);
   const [loadingBrand, setLoadingBrand] = useState(false);
   const [listError, setListError] = useState("");
+  const selectedIdRef = useRef(selectedId);
+
+  useEffect(() => {
+    selectedIdRef.current = selectedId;
+  }, [selectedId]);
 
   const refreshBrands = useCallback(async () => {
     const list = await getBrands();
@@ -63,9 +68,16 @@ export default function App() {
   }
 
   async function handleSend(message) {
-    await sendChat(selectedId, message);
-    const updated = await getBrandById(selectedId);
-    setBrand(updated);
+    const brandId = selectedId;
+    if (!brandId) return;
+
+    await sendChat(brandId, message);
+    const updated = await getBrandById(brandId);
+
+    // Ignore stale result if the user switched brands mid-request
+    if (selectedIdRef.current === brandId) {
+      setBrand(updated);
+    }
   }
 
   return (

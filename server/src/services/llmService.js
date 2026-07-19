@@ -12,18 +12,33 @@ function parseLlmJson(raw) {
   return JSON.parse(stripMarkdownFences(raw));
 }
 
-async function callGroq(prompt, { strict = false } = {}) {
+function isValidResult(parsed) {
+  if (!parsed?.reply || typeof parsed.reply !== "string") return false;
+  if (!parsed.state || typeof parsed.state !== "object") return false;
+
+  const { brandName, tagline, targetAudience } = parsed.state;
+  return (
+    typeof brandName === "string" &&
+    brandName.trim() &&
+    typeof tagline === "string" &&
+    tagline.trim() &&
+    typeof targetAudience === "string" &&
+    targetAudience.trim()
+  );
+}
+
+async function callGroq({ system, user }, { strict = false } = {}) {
   const groq = getGroqClient();
 
-  const content = strict
-    ? `${prompt}\n\nIMPORTANT: Return ONLY a valid JSON object. No markdown fences, no extra text.`
-    : prompt;
+  const systemContent = strict
+    ? `${system}\n\nIMPORTANT: Return ONLY a valid JSON object. brandName, tagline, and targetAudience must be non-empty strings.`
+    : system;
 
   const completion = await groq.chat.completions.create({
     model: MODEL,
     messages: [
-      { role: "system", content },
-      { role: "user", content: "Respond with the JSON object now." },
+      { role: "system", content: systemContent },
+      { role: "user", content: user },
     ],
     temperature: 0.7,
     response_format: { type: "json_object" },
@@ -33,30 +48,28 @@ async function callGroq(prompt, { strict = false } = {}) {
 }
 
 function fallbackResult(brand) {
+  const current = brand.state?.toObject?.() ?? brand.state ?? {};
   return {
     reply:
       "I had trouble updating the brand just now. Please try your message again.",
-    state: brand.state ?? {},
+    state: current,
   };
 }
 
 /**
  * Calls Groq and returns { reply, state }.
- * Retries once on parse failure; returns a safe fallback if still invalid.
+ * Retries once on parse/validation failure; returns a safe fallback if still invalid.
  */
 export async function generateBrandUpdate(prompt, brand) {
   try {
     const raw = await callGroq(prompt);
     const parsed = parseLlmJson(raw);
 
-    if (!parsed.reply || typeof parsed.reply !== "string") {
-      throw new Error("Missing reply field");
+    if (!isValidResult(parsed)) {
+      throw new Error("Invalid or incomplete LLM JSON");
     }
 
-    return {
-      reply: parsed.reply,
-      state: parsed.state && typeof parsed.state === "object" ? parsed.state : {},
-    };
+    return { reply: parsed.reply, state: parsed.state };
   } catch (firstErr) {
     console.warn("LLM parse/call failed, retrying once:", firstErr.message);
 
@@ -64,14 +77,11 @@ export async function generateBrandUpdate(prompt, brand) {
       const raw = await callGroq(prompt, { strict: true });
       const parsed = parseLlmJson(raw);
 
-      if (!parsed.reply || typeof parsed.reply !== "string") {
-        throw new Error("Missing reply field on retry");
+      if (!isValidResult(parsed)) {
+        throw new Error("Invalid or incomplete LLM JSON on retry");
       }
 
-      return {
-        reply: parsed.reply,
-        state: parsed.state && typeof parsed.state === "object" ? parsed.state : {},
-      };
+      return { reply: parsed.reply, state: parsed.state };
     } catch (retryErr) {
       console.error("LLM retry failed:", retryErr.message);
       return fallbackResult(brand);
