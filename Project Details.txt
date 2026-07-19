@@ -1,0 +1,193 @@
+Take-Home Assignment
+AI Brand Assistant with Multi-Brand Context
+________________________________________
+Objective
+Build a backend service (with optional UI) for an AI-powered brand assistant that allows users to create and manage multiple brands, interact via chat, and maintain context across conversations.
+________________________________________
+**On completion send public github link on email to info@rohangirdhani.com
+Problem Statement
+Design and implement a system where:
+•	A user can create multiple brands (e.g., “Fitness Brand”, “Luxury Fashion Brand”).
+•	Each brand has its own independent conversation context.
+•	The user can switch between brands (via dropdown in UI or via API).
+•	The system uses an LLM (e.g., Groq or any equivalent) to generate responses.
+•	The assistant helps generate: 
+o	Brand name
+o	Tagline
+o	Target audience
+The interaction should be conversational, and responses must evolve based on previous inputs within the same brand.
+________________________________________
+Core Requirements
+1. Multi-Brand Support
+•	Users can create multiple brands.
+•	Each brand must maintain its own isolated context.
+•	Switching between brands should correctly load the relevant context.
+________________________________________
+2. Chat-Based Interaction
+Implement a chat-like system where:
+•	Input: 
+o	“I want a fitness brand”
+o	“Make it more premium”
+•	Output: 
+o	Updated suggestions that reflect previous inputs
+________________________________________
+3. Context Management
+•	The system must maintain context across multiple interactions.
+•	Context must be scoped per brand.
+•	You may implement context: 
+o	In-memory, or
+o	Using a database
+You must clearly document your choice.
+________________________________________
+4. LLM Integration
+•	Use any LLM (e.g., Groq).
+•	Design prompts carefully to ensure responses are coherent and context-aware.
+________________________________________
+5. API Design
+At minimum, implement the following endpoints:
+Create Brand
+POST /brands
+Request:
+{
+  "name": "Fitness Brand"
+}
+________________________________________
+List Brands
+GET /brands
+________________________________________
+Chat
+POST /chat
+Request:
+{
+  "brand_id": "123",
+  "message": "Make it more premium"
+}
+Response:
+{
+  "response": "..."
+}
+________________________________________
+Get Brand Context
+GET /brands/:id
+________________________________________
+6. Persistence
+•	Store: 
+o	Brands
+o	Context (messages or structured state)
+•	If using in-memory storage, clearly mention limitations.
+________________________________________
+Optional Enhancements (Not Mandatory)
+•	Simple UI with brand dropdown and chat interface
+•	Structured context (e.g., tone, audience, keywords instead of raw chat)
+•	Caching repeated requests
+•	Streaming responses
+________________________________________
+Deliverables
+________________________________________
+Submit a Git repository containing:
+1.	Source code
+2.	README file (mandatory)
+3.	API usage examples (cURL or Postman)
+4.	Loom video walkthrough (mandatory)
+________________________________________
+Loom Video Requirement
+Record a short video (5–10 minutes) explaining:
+•	Your overall approach
+•	System architecture
+•	How context is managed per brand
+•	A live demo of the API (or UI if built)
+•	Key design decisions and trade-offs
+Provide the Loom link in the README.
+________________________________________
+Time Expectation
+4 to 6 hours maximum. Focus on clarity and correctness rather than completeness.
+________________________________________
+README Guidelines (Must Follow)
+Your README should include the following sections:
+________________________________________
+1. Project Overview
+•	What the system does
+•	Key features implemented
+________________________________________
+2. Tech Stack
+•	Language and framework
+•	LLM provider used
+•	Storage method (in-memory or database)
+________________________________________
+3. Architecture Overview
+Explain:
+•	How requests flow through the system
+•	How context is stored and retrieved
+•	How LLM is integrated
+A simple diagram is a plus but not required.
+________________________________________
+4. Setup Instructions
+Step-by-step instructions to run the project locally.
+Example:
+git clone <repo>
+cd project
+npm install
+npm start
+Include:
+•	Environment variables required (e.g., API keys)
+•	How to configure LLM access
+________________________________________
+5. How to Use
+Provide clear instructions to test the system.
+Example:
+Create a brand
+POST /brands
+Send chat message
+POST /chat
+{
+  "brand_id": "1",
+  "message": "I want a fitness brand"
+}
+Switch brand
+•	Use a different brand_id in requests
+________________________________________
+6. Design Decisions
+Explain:
+•	Why you chose in-memory or database
+•	How you handled context
+•	Any trade-offs made
+________________________________________
+7. Limitations
+Mention:
+•	What is not handled
+•	What would break at scale
+________________________________________
+8. Future Improvements
+Examples:
+•	Better context summarization
+•	Caching
+•	Improved prompt design
+•	Scalability improvements
+________________________________________
+Evaluation Criteria
+Candidates will be evaluated on:
+1. Context Handling
+•	Does the system maintain meaningful state per brand?
+•	Do responses evolve logically?
+________________________________________
+2. Context Isolation
+•	Is each brand independent?
+•	Any leakage between brands is a failure.
+________________________________________
+3. Code Quality
+•	Clean structure
+•	Readable and maintainable code
+________________________________________
+4. System Design Thinking
+•	Proper data modeling
+•	Clear separation of concerns
+________________________________________
+5. LLM Usage
+•	Prompt quality
+•	Effective use of context
+________________________________________
+Important Notes
+•	Focus on correctness and clarity over completeness.
+•	Avoid over-engineering.
+•	Document assumptions clearly.
+
