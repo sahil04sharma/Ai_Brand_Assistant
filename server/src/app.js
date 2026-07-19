@@ -5,7 +5,14 @@ import chatRoutes from "./routes/chatRoutes.js";
 
 const app = express();
 
-app.use(cors());
+// Allow browser calls from a separate frontend origin (local Vite or deployed UI)
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
