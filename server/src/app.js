@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import brandRoutes from "./routes/brandRoutes.js";
 
 const app = express();
 
@@ -9,5 +10,7 @@ app.use(express.json());
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.use("/brands", brandRoutes);
 
 export default app;
